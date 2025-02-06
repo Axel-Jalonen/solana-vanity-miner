@@ -1,4 +1,5 @@
 use std::cell;
+use std::env;
 use std::io;
 use std::io::Write;
 use std::thread;
@@ -113,14 +114,27 @@ fn generate_capital_variations(input: &str) -> Vec<Vec<u8>> {
 }
 
 fn main() {
-    // START CONFIGURATION
-    let prefix_str = "prefix";
-    // Enable all combinations of capitals
-    let enable_all_caps_alt = true;
-    // Enable searching for substrings at arbitrary position
-    let enable_search_for_substring = false;
-    let num_threads = 8;
-    // END CONFIGURATION
+    let args: Vec<String> = env::args().collect();
+    dbg!(&args);
+
+    if !args.len() < 3 {
+        eprintln!("Please provide correct arguments");
+        panic!();
+    }
+
+    let prefix_str: &str = &args[1];
+    let num_threads: u64 = args[2].parse::<u64>().unwrap();
+    let mut enable_all_caps_alt: bool = false;
+    let mut enable_search_for_substring: bool = false;
+
+    if args.len() > 3 {
+        if args[3] == "--caps" {
+            enable_all_caps_alt = true;
+        }
+        if args[4] == "--substrs" {
+            enable_search_for_substring = true;
+        }
+    }
 
     let mut prefixs: Vec<Vec<u8>> = vec![prefix_str.as_bytes().to_vec()];
 
